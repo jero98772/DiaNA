@@ -18,6 +18,8 @@ DNA-equiv:
  C <-> G
 """
 import re, os, glob, random, time, math
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 
 brain_path = "resources/BRAIN/brain.in" # in/out brain-tmp file
 genomes_path = 'datasets/' # genome datasets raw data
@@ -367,6 +369,7 @@ def libre_ai_show_statistics(memory):
             print("   + [N]  *ANY*   : "+str(total_any))
     print("\n"+"-"*5 + "\n")
     extract_pattern_most_present_local(memory)
+    plotATCG(total_adenine,total_guanine,total_cytosine,total_thymine)
 
 def convert_memory_to_dict(memory): # [index] = genome_name, pattern, num_rep
     memory_dict = {}
@@ -949,6 +952,31 @@ def generate_pattern_len_report_structure(memory):
     for i in range(pattern_len_quantity):
         if pattern_len_data[i] > 0:
             print("     - [length = "+str(i)+"] : [ "+str(pattern_len_data[i])+" ]") 
+
+def plotATCG(total_adenine,total_guanine,total_cytosine,total_thymine):
+    plot_limit = 100
+    total = total_adenine + total_guanine + total_cytosine + total_thymine
+    percentage_adenine = round((total_adenine/total)*plot_limit,5)
+    percentage_guanine = round((total_guanine/total)*plot_limit,5)
+    percentage_cytosine = round((total_cytosine/total)*plot_limit,5)
+    percentage_thymine = round((total_thymine/total)*plot_limit,5)
+    adenine_text_position = percentage_adenine/2
+    guanine_text_position = percentage_guanine/2
+    cytosine_text_position = percentage_cytosine/2
+    thymine_text_position = percentage_thymine/2
+    figure = plt.figure()
+    subplot = figure.add_subplot(aspect='equal')
+    subplot.add_patch(patches.Rectangle((plot_limit/2-percentage_adenine, plot_limit/2), percentage_adenine, percentage_adenine,fc="pink"))
+    subplot.text(plot_limit/2-percentage_adenine+adenine_text_position, plot_limit/2+adenine_text_position,"adenine "+str(percentage_adenine)+"%",horizontalalignment='center', fontsize=adenine_text_position)
+    subplot.add_patch(patches.Rectangle((plot_limit/2-percentage_guanine,plot_limit/2-percentage_guanine), percentage_guanine, percentage_guanine,fc="cyan"))
+    subplot.text(plot_limit/2-percentage_guanine+guanine_text_position,plot_limit/2-percentage_guanine+guanine_text_position,"guanine "+str(percentage_guanine)+"%",horizontalalignment='center', fontsize=guanine_text_position)
+    subplot.add_patch(patches.Rectangle((plot_limit/2,plot_limit/2), percentage_cytosine, percentage_cytosine,fc="gray"))
+    subplot.text(plot_limit/2+cytosine_text_position,plot_limit/2+cytosine_text_position,"cytosine "+str(percentage_cytosine)+"%",horizontalalignment='center', fontsize=cytosine_text_position)
+    subplot.add_patch(patches.Rectangle((plot_limit/2,plot_limit/2-percentage_thymine), percentage_thymine, percentage_thymine,fc="orange"))
+    subplot.text(plot_limit/2+thymine_text_position,plot_limit/2-percentage_thymine+thymine_text_position,"thymine "+str(percentage_thymine)+"%",horizontalalignment='center', fontsize=thymine_text_position)
+    plt.ylim((0,plot_limit))
+    plt.xlim((0,plot_limit))
+    plt.show()
 
 def print_banner():
     print("\n"+"="*50)
